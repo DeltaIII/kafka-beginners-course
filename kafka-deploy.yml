@@ -30,5 +30,5 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 networks:
   kafka-cli:
-      external:
+      external: true
       name: kafka-cli
