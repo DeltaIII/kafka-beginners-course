@@ -6,6 +6,8 @@ services:
       replicas: 3
     ports:
       - "2181:2181"
+    network:
+      kafka-cli
   kafka:
     image: wurstmeister/kafka:2.12-2.3.0
     deploy:
@@ -20,3 +22,5 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    network:
+      kafka-cli
