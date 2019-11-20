@@ -13,7 +13,9 @@ services:
     deploy:
       replicas: 3
     ports:
-      - "9092"
+      - "9092"      
+    networks:
+      - kafka-cli
     environment:
       #KAFKA_ADVERTISED_HOST_NAME: "${DOCKER_MACHINE_VM_IP}"
       #KAFKA_ADVERTISED_PORT: "9092"
@@ -22,5 +24,5 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - kafka-cli
+  networks:
+    kafka-cli:
