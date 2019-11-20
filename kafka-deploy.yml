@@ -12,6 +12,8 @@ services:
     image: wurstmeister/kafka:2.12-2.3.0
     deploy:
       replicas: 3
+    networks:
+      - kafka-cli
     ports:
       - target: 9094
         published: 9094
@@ -28,5 +30,4 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 networks:
   kafka-cli:
-    external:
       name: kafka-cli
