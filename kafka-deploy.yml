@@ -15,7 +15,7 @@ services:
     networks:
       - kafka-cli
     ports:
-      - target: 9092
+      - target: 9094
         published: 9094
         protocol: tcp
         mode: host
