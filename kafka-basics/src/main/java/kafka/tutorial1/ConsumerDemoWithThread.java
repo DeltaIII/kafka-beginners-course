@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 public class ConsumerDemoWithThread {
 
-	public class ConsumerRunnable implements Runnable {
+	public static class ConsumerRunnable implements Runnable {
 
 		private final CountDownLatch latch;
 		private final KafkaConsumer<String, String> consumer;
@@ -47,10 +47,7 @@ public class ConsumerDemoWithThread {
 			// poll for new data
 			try {
 				while (true) {
-					final ConsumerRecords<String, String> records = this.consumer.poll(Duration.ofMillis(100)); // new
-																												// in
-																												// Kafka
-																												// 2.0.0
+					final ConsumerRecords<String, String> records = this.consumer.poll(Duration.ofMillis(100));
 
 					for (final ConsumerRecord<String, String> record : records) {
 						this.logger.info("Key: " + record.key() + ", Value: " + record.value());
@@ -74,14 +71,6 @@ public class ConsumerDemoWithThread {
 	}
 
 	public static void main(final String[] args) {
-		new ConsumerDemoWithThread().run();
-	}
-
-	private ConsumerDemoWithThread() {
-
-	}
-
-	private void run() {
 		final Logger logger = LoggerFactory.getLogger(ConsumerDemoWithThread.class.getName());
 
 		final String bootstrapServers = NetworkConstants.BOOTSTRAP_SERVER;
@@ -120,5 +109,9 @@ public class ConsumerDemoWithThread {
 		} finally {
 			logger.info("Application is closing");
 		}
+	}
+
+	private ConsumerDemoWithThread() {
+
 	}
 }
