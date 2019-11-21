@@ -1,38 +1,39 @@
 package kafka.tutorial1;
 
+import java.util.Properties;
+
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
-
-import java.util.Properties;
+import org.kafka.constants.NetworkConstants;
+import org.kafka.constants.Topics;
 
 public class ProducerDemo {
 
-    public static void main(String[] args) {
+	public static void main(final String[] args) {
 
-        String bootstrapServers = "127.0.0.1:9092";
+		final String bootstrapServers = NetworkConstants.BOOTSTRAP_SERVER;
 
-        // create Producer properties
-        Properties properties = new Properties();
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+		// create Producer properties
+		final Properties properties = new Properties();
+		properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+		properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+		properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
-        // create the producer
-        KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
+		// create the producer
+		final KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 
-        // create a producer record
-        ProducerRecord<String, String> record =
-                new ProducerRecord<String, String>("first_topic", "hello world");
+		// create a producer record
+		final ProducerRecord<String, String> record = new ProducerRecord<>(Topics.FIRST, "hello world");
 
-        // send data - asynchronous
-        producer.send(record);
+		// send data - asynchronous
+		producer.send(record);
 
-        // flush data
-        producer.flush();
-        // flush and close producer
-        producer.close();
+		// flush data
+		producer.flush();
+		// flush and close producer
+		producer.close();
 
-    }
+	}
 }
