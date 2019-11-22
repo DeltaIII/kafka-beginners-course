@@ -35,7 +35,8 @@ public class ParsedTweetJson {
 
 		final Iterator<JsonElement> iterator = hashtagsJson.iterator();
 		while (iterator.hasNext()) {
-			hashTags.add(iterator.next().getAsString());
+			final JsonObject hashtagJson = iterator.next().getAsJsonObject();
+			hashTags.add(hashtagJson.get("text").getAsString());
 		}
 		return hashTags;
 	}
