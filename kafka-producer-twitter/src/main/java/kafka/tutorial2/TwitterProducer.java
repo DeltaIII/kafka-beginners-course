@@ -10,7 +10,6 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.kafka.constants.NetworkConstants;
 import org.kafka.constants.Secrets;
 import org.kafka.constants.Topics;
 import org.slf4j.Logger;
@@ -31,8 +30,12 @@ public class TwitterProducer {
 
 	private static final List<String> TERMS_TO_FOLLOW = Lists.newArrayList("software", "bjss", "kafka");
 
-	public static KafkaProducer<String, String> createKafkaProducer() {
-		final String bootstrapServers = NetworkConstants.BOOTSTRAP_SERVER;
+	public static void main(final String[] args) {
+		new TwitterProducer().run();
+	}
+
+	private static KafkaProducer<String, String> createKafkaProducer() {
+		final String bootstrapServers = "127.0.0.1";// NetworkConstants.BOOTSTRAP_SERVER;
 
 		// create Producer properties
 		final Properties properties = new Properties();
@@ -58,10 +61,6 @@ public class TwitterProducer {
 		return producer;
 	}
 
-	public static void main(final String[] args) {
-		TwitterProducer.run();
-	}
-
 	private static Client createTwitterClient(final BlockingQueue<String> msgQueue) {
 
 		/**
@@ -85,7 +84,24 @@ public class TwitterProducer {
 		return hosebirdClient;
 	}
 
-	private static void run() {
+	private static void setupShutdownHooks(final Logger logger, final Client client,
+			final KafkaProducer<String, String> producer) {
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			logger.info("stopping application...");
+			logger.info("shutting down client from twitter...");
+			client.stop();
+			logger.info("closing producer...");
+			producer.close();
+			logger.info("done!");
+		}));
+	}
+
+	private volatile boolean shouldProduce = true;
+
+	private TwitterProducer() {
+	}
+
+	private void run() {
 		final Logger logger = LoggerFactory.getLogger(TwitterProducer.class.getName());
 
 		logger.info("Setup");
@@ -100,7 +116,7 @@ public class TwitterProducer {
 		final Client client = createTwitterClient(msgQueue);
 
 		// create a kafka producer
-		final KafkaProducer<String, String> producer = createKafkaProducer();
+		final KafkaProducer<String, String> producer = TwitterProducer.createKafkaProducer();
 
 		// add a shutdown hook
 		setupShutdownHooks(logger, client, producer);
@@ -111,12 +127,12 @@ public class TwitterProducer {
 		// loop to send tweets to kafka
 		// on a different thread, or multiple different threads....
 		try {
-			while (!client.isDone()) {
+			while (!client.isDone() && this.shouldProduce) {
 
 				final String message = msgQueue.poll(5, TimeUnit.SECONDS);
 
 				if (message != null) {
-					sendMessageToKafka(logger, producer, message);
+					this.sendMessageToKafka(logger, producer, message);
 				}
 			}
 		} catch (final InterruptedException e) {
@@ -128,7 +144,7 @@ public class TwitterProducer {
 		logger.info("End of application");
 	}
 
-	private static void sendMessageToKafka(final Logger logger, final KafkaProducer<String, String> producer,
+	private void sendMessageToKafka(final Logger logger, final KafkaProducer<String, String> producer,
 			final String message) {
 		logger.info(message);
 
@@ -136,22 +152,8 @@ public class TwitterProducer {
 		producer.send(record, (recordMetadata, e) -> {
 			if (e != null) {
 				logger.error("Something bad happened", e);
+				this.shouldProduce = false;
 			}
 		});
-	}
-
-	private static void setupShutdownHooks(final Logger logger, final Client client,
-			final KafkaProducer<String, String> producer) {
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			logger.info("stopping application...");
-			logger.info("shutting down client from twitter...");
-			client.stop();
-			logger.info("closing producer...");
-			producer.close();
-			logger.info("done!");
-		}));
-	}
-
-	private TwitterProducer() {
 	}
 }
