@@ -36,8 +36,7 @@ public class TwitterProducer {
 	}
 
 	private static KafkaProducer<String, String> createKafkaProducer() {
-		final String bootstrapServers = "127.0.1.1:9999";// NetworkConstants.BOOTSTRAP_SERVER;
-
+		final String bootstrapServers = NetworkConstants.BOOTSTRAP_SERVER;
 		// create Producer properties
 		final Properties properties = new Properties();
 		properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
