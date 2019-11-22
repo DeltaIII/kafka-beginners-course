@@ -13,4 +13,6 @@ public final class NetworkConstants {
 	public static final String ZOOKEEPER_PORT = "2181";
 	public static final String ZOOKEEPER_SERVER = ZOOKEEPER_HOST_NAME + ":" + ZOOKEEPER_PORT;
 
+	public static final int NUMBER_OF_RETRIES = 5;
+
 }

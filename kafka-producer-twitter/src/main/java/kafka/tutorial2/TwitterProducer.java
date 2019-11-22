@@ -10,6 +10,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.kafka.constants.NetworkConstants;
 import org.kafka.constants.Secrets;
 import org.kafka.constants.Topics;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class TwitterProducer {
 	}
 
 	private static KafkaProducer<String, String> createKafkaProducer() {
-		final String bootstrapServers = "127.0.0.1:9092";// NetworkConstants.BOOTSTRAP_SERVER;
+		final String bootstrapServers = "127.0.1.1:9999";// NetworkConstants.BOOTSTRAP_SERVER;
 
 		// create Producer properties
 		final Properties properties = new Properties();
@@ -46,7 +47,7 @@ public class TwitterProducer {
 		// create safe Producer
 		properties.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
 		properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
-		properties.setProperty(ProducerConfig.RETRIES_CONFIG, Integer.toString(Integer.MAX_VALUE));
+		properties.setProperty(ProducerConfig.RETRIES_CONFIG, Integer.toString(NetworkConstants.NUMBER_OF_RETRIES));
 		properties.setProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "5"); // kafka 2.0 >= 1.1 so we can
 																							// keep this as 5. Use 1
 																							// otherwise.
@@ -146,7 +147,6 @@ public class TwitterProducer {
 
 	private void sendMessageToKafka(final Logger logger, final KafkaProducer<String, String> producer,
 			final String message) {
-		logger.info(message);
 		this.shouldProduce = false; // handle both connection and producing errors
 		final ProducerRecord<String, String> record = new ProducerRecord<>(Topics.TWITTER, null, message);
 		producer.send(record, (recordMetadata, e) -> {
