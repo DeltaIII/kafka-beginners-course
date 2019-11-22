@@ -49,7 +49,7 @@ public class BasicConsumer {
 		final KafkaConsumer<String, String> consumer = createConsumer(Topics.TWITTER);
 		try {
 			while (true) {
-				final ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100)); // new in Kafka
+				final ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000)); // new in Kafka
 																										// 2.0.0
 
 				final int recordCount = records.count();
