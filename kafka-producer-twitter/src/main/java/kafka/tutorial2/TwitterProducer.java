@@ -153,6 +153,7 @@ public class TwitterProducer {
 			if (e != null) {
 				logger.error("Something bad happened", e);
 			} else {
+				logger.info(recordMetadata.topic() + " -- partition --> " + recordMetadata.partition());
 				this.shouldProduce = true;
 			}
 		});
