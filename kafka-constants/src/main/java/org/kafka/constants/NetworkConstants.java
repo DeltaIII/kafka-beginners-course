@@ -14,5 +14,6 @@ public final class NetworkConstants {
 	public static final String ZOOKEEPER_SERVER = ZOOKEEPER_HOST_NAME + ":" + ZOOKEEPER_PORT;
 
 	public static final int NUMBER_OF_RETRIES = 5;
+	public static final String DELIVERY_TIMEOUT = "500"; // in ms
 
 }
