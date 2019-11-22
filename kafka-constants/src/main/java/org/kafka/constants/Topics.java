@@ -6,5 +6,6 @@ package org.kafka.constants;
 public class Topics {
 
 	public static final String FIRST = "first_topic2";
+	public static final String TWITTER = "twitter_tweets";
 
 }

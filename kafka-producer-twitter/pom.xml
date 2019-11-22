@@ -13,6 +13,12 @@
 
 
     <dependencies>
+ 	    <dependency>
+      		<groupId>com.github.simplesteph</groupId>
+      		<artifactId>kafka-constants</artifactId>
+      		<version>1.0</version>
+    	</dependency>
+    
         <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
