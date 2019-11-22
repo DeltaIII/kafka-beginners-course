@@ -147,12 +147,13 @@ public class TwitterProducer {
 	private void sendMessageToKafka(final Logger logger, final KafkaProducer<String, String> producer,
 			final String message) {
 		logger.info(message);
-
+		this.shouldProduce = false; // handle both connection and producing errors
 		final ProducerRecord<String, String> record = new ProducerRecord<>(Topics.TWITTER, null, message);
 		producer.send(record, (recordMetadata, e) -> {
 			if (e != null) {
 				logger.error("Something bad happened", e);
-				this.shouldProduce = false;
+			} else {
+				this.shouldProduce = true;
 			}
 		});
 	}
